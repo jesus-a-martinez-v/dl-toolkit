@@ -46,7 +46,7 @@ predictions = model.predict(image)
 P = imagenet_utils.decode_predictions(predictions)
 
 for i, (imagenet_id, label, prob) in enumerate(P[0]):
-    print(f'{i + 1}. {label}: {prob * 100}%')
+    print(f'{i + 1}. {label}: {prob * 100:.2f}%')
 
 original = cv2.imread(arguments['image'])
 imagenet_id, label, prob = P[0][0]

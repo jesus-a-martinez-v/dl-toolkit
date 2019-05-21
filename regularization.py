@@ -33,4 +33,4 @@ for r in (None, 'l1', 'l2'):
     model.fit(train_X, train_y)
 
     accuracy = model.score(test_X, test_y)
-    print(f'[INFO] "{r}" penalty accuracy: {accuracy * 100}%')
+    print(f'[INFO] "{r}" penalty accuracy: {accuracy * 100:.2f}%')
