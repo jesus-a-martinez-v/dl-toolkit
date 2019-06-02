@@ -3,7 +3,7 @@ import numpy as np
 from keras.utils import np_utils
 
 
-class HDF5DatasetGenerator(object):
+class HDF5DatasetGenerator:
     def __init__(self, db_path, batch_size, preprocessors=None, augmenter=None, binarize=True, classes=2):
         self.batch_size = batch_size
         self.preprocessors = preprocessors
@@ -19,8 +19,7 @@ class HDF5DatasetGenerator(object):
 
         while epochs < passes:
             for i in np.arange(0, self.num_images, self.batch_size):
-                print(self.batch_size)
-                images = self.db['images'[i: i + self.batch_size]]
+                images = self.db['images'][i: i + self.batch_size]
                 labels = self.db['labels'][i: i + self.batch_size]
 
                 if self.binarize:
@@ -38,10 +37,9 @@ class HDF5DatasetGenerator(object):
                     images = np.array(processed_images)
 
                 if self.augmenter is not None:
-                    # Assuming it is a Keras ImageDataGenerator.
-                    images, labels = next(self.augmenter.flow(images, labels, batch_size=self.batch_size))
+                    (images, labels) = next(self.augmenter.flow(images, labels, batch_size=self.batch_size))
 
-                yield images, labels
+                yield (images, labels)
 
             epochs += 1
 

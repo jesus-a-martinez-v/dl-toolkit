@@ -1,7 +1,7 @@
 import matplotlib
 
 from callbacks.trainingmonitor import TrainingMonitor
-from nn.conv.minigooglenet import MiniGoogLeNet
+from nn.conv.resnet import ResNet
 
 matplotlib.use('Agg')
 
@@ -12,13 +12,16 @@ from keras.optimizers import SGD
 from keras.datasets import cifar10
 import numpy as np
 import argparse
+import sys
 import os
 
-NUM_EPOCHS = 70
-INIT_LR = 5e-3
+sys.setrecursionlimit(5000)
+
+NUM_EPOCHS = 100
+INIT_LR = 1e-1
 
 
-def poly_decay(epoch):
+def polynomial_decay(epoch):
     max_epochs = NUM_EPOCHS
     base_lr = INIT_LR
     power = 1.0
@@ -29,8 +32,8 @@ def poly_decay(epoch):
 
 
 argument_parser = argparse.ArgumentParser()
-argument_parser.add_argument('-m', '--model', required=True, help='Path to output model.')
-argument_parser.add_argument('-o', '--output', required=True, help='Path to output directory (logs, plots, etc).')
+argument_parser.add_argument('-m', '--model', required=True, help='Path to the output model.')
+argument_parser.add_argument('-o', '--output', required=True, help='Path to output directory (logs, plots, etc.)')
 arguments = vars(argument_parser.parse_args())
 
 print('[INFO] Loading CIFAR-10 data...')
@@ -50,16 +53,19 @@ augmenter = ImageDataGenerator(width_shift_range=0.1, height_shift_range=0.1, ho
 
 figure_path = os.path.sep.join([arguments['output'], f'{os.getpid()}.png'])
 json_path = os.path.sep.join([arguments['output'], f'{os.getpid()}.json'])
-callbacks = [TrainingMonitor(figure_path, json_path=json_path), LearningRateScheduler(poly_decay)]
+callbacks = [TrainingMonitor(figure_path, json_path=json_path),
+             LearningRateScheduler(polynomial_decay)]
 
 print('[INFO] Compiling model...')
 optimizer = SGD(lr=INIT_LR, momentum=0.9)
-model = MiniGoogLeNet.build(width=32, height=32, depth=3, classes=10)
+model = ResNet.build(32, 32, 3, 10, (9, 9, 9), (64, 64, 128, 256), regularization=0.0005)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 
 print('[INFO] Training network...')
-model.fit_generator(augmenter.flow(X_train, y_train, batch_size=64), validation_data=(X_test, y_test),
-                    steps_per_epoch=len(X_train) // 64, epochs=NUM_EPOCHS, callbacks=callbacks)
+model.fit_generator(augmenter.flow(X_train, y_train, batch_size=128),
+                    validation_data=(X_test, y_test),
+                    steps_per_epoch=len(X_train) // 128, epochs=NUM_EPOCHS,
+                    callbacks=callbacks, verbose=1)
 
 print('[INFO] Serializing network...')
 model.save(arguments['model'])
