@@ -61,13 +61,14 @@ def gradient_ascent(X, iterations, alpha, max_loss=-np.inf):
 
     return X
 
+
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument('-i', '--image', required=True, help='Path to input image.')
 argument_parser.add_argument('-o', '--output', required=True, help='Path to output (dreamed) image.')
 arguments = vars(argument_parser.parse_args())
 
-# Layers and weights we are going to use to make the network "dream". The larger the weight, the larger the contribution of that layer to the
-# output dream.
+# Layers and weights we are going to use to make the network "dream". The larger the weight, the larger the contribution
+# of that layer to the output dream.
 LAYERS = {
     'mixed2': 2.0,
     'mixed3': 0.5
@@ -110,7 +111,7 @@ dimensions = image.shape[1:3]
 octave_dimensions = [dimensions]
 
 for i in range(1, NUMBER_OF_OCTAVES):
-    size = [int(d / (OCTAVE_SCALE ** i)) for  d in dimensions]
+    size = [int(d / (OCTAVE_SCALE ** i)) for d in dimensions]
     octave_dimensions.append(size)
 
 octave_dimensions = octave_dimensions[::-1]  # Reverse so the smallest dimensions appear first.
