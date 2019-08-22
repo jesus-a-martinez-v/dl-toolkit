@@ -1,9 +1,11 @@
-from super_resolution.config import sr_config as config
+import argparse
+
+import cv2
+import numpy as np
 from keras.models import load_model
 from scipy import misc
-import numpy as np
-import argparse
-import cv2
+
+from super_resolution.config import sr_config as config
 
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument('-i', '--image', required=True, help='Path to input image.')

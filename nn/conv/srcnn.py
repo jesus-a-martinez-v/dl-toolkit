@@ -1,7 +1,8 @@
-from keras.models import Sequential
+from keras import backend as K
 from keras.layers.convolutional import Conv2D
 from keras.layers.core import Activation
-from keras import backend as K
+from keras.models import Sequential
+
 
 class SRCNN(object):
     @staticmethod
