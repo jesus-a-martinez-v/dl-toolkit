@@ -18,6 +18,6 @@ TEST_HDF5 = '../assets/datasets/tiny-imagenet-200/hdf5/test.hdf5'
 DATASET_MEAN = 'output/tiny-imagenet-200-mean.json'
 
 OUTPUT_PATH = 'output'
-MODEL_PATH = path.sep.join([OUTPUT_PATH, 'checkpoints/epoch_70.hdf5'])
+MODEL_PATH = path.sep.join([OUTPUT_PATH, 'checkpoints/Epoch_45.hdf5'])
 FIGURE_PATH = path.sep.join([OUTPUT_PATH, 'deepergooglenet_tinyimagenet.png'])
 JSON_PATH = path.sep.join([OUTPUT_PATH, 'deepergooglenet_tinyimagenet.json'])

@@ -38,7 +38,7 @@ G = list()
 B = list()
 
 for d_type, paths, labels, output_path in datasets:
-    print(f'[INFO] Bulding {output_path}...')
+    print(f'[INFO] Building {output_path}...')
     writer = HDF5DatasetWriter((len(paths), 256, 256, 3), output_path)
 
     widgets = ['Building Dataset: ', progressbar.Percentage(), ' ', progressbar.Bar(), ' ', progressbar.ETA()]

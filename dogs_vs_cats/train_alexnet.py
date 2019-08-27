@@ -27,11 +27,11 @@ patch_preprocessor = PatchPreprocessor(227, 227)
 mean_preprocessor = MeanPreprocessor(means['R'], means['G'], means['B'])
 image_to_array_preprocessor = ImageToArrayPreprocessor()
 
-train_generator = HDF5DatasetGenerator(config.TRAIN_HDF5, 32, augmenter=augmenter,
+train_generator = HDF5DatasetGenerator(config.TRAIN_HDF5, 128, augmenter=augmenter,
                                        preprocessors=[patch_preprocessor, mean_preprocessor,
                                                       image_to_array_preprocessor], classes=2)
-validation_generator = HDF5DatasetGenerator(config.VAL_HDF5, 32, preprocessors=[simple_preprocessor, mean_preprocessor,
-                                                                                image_to_array_preprocessor],
+validation_generator = HDF5DatasetGenerator(config.VAL_HDF5, 128, preprocessors=[simple_preprocessor, mean_preprocessor,
+                                                                                 image_to_array_preprocessor],
                                             classes=2)
 
 print('[INFO] Compiling model...')
@@ -43,9 +43,9 @@ path = os.path.sep.join([config.OUTPUT_PATH, f'{os.getpid()}.png'])
 callbacks = [TrainingMonitor(path)]
 
 model.fit_generator(train_generator.generator(),
-                    steps_per_epoch=train_generator.num_images // 32,
+                    steps_per_epoch=train_generator.num_images // 128,
                     validation_data=validation_generator.generator(),
-                    validation_steps=validation_generator.num_images // 32,
+                    validation_steps=validation_generator.num_images // 128,
                     epochs=75,
                     max_queue_size=5,
                     callbacks=callbacks,
