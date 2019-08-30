@@ -4,7 +4,7 @@ import os
 
 import mxnet as mx
 
-from mx_imagenet_alexnet.config import imagenet_alexnet_config as config
+from mx_imagenet_vggnet.config import imagenet_vggnet_config as config
 
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument('-c', '--checkpoints', required=True, help='Path to output checkpoints directory.')
@@ -16,7 +16,7 @@ with open(config.DATASET_MEAN, 'r') as f:
     means = json.loads(f.read())
 
 test_iter = mx.io.ImageRecordIter(path_imgrec=config.TEST_MX_REC,
-                                  data_shape=(3, 227, 227),
+                                  data_shape=(3, 224, 224),
                                   batch_size=config.BATCH_SIZE,
                                   mean_r=means['R'],
                                   mean_g=means['G'],

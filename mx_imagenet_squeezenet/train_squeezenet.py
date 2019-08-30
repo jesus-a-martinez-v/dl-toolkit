@@ -5,8 +5,8 @@ import os
 
 import mxnet as mx
 
-from mx_imagenet_alexnet.config import imagenet_alexnet_config as config
-from nn.mxconv.mxalexnet import MxAlexNet
+from mx_imagenet_squeezenet.config import imagenet_squeezenet_config as config
+from nn.mxconv.mxsqueezenet import MxSqueezeNet
 
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument('-c', '--checkpoints', required=True, help='Path to output checkpoint directory.')
@@ -49,7 +49,7 @@ auxiliary_params = None
 
 if arguments['start_epoch'] <= 0:
     print('[INFO] Building network...')
-    model = MxAlexNet.build(config.NUM_CLASSES)
+    model = MxSqueezeNet.build(config.NUM_CLASSES)
 else:
     print(f'[INFO] Loading epoch {arguments["start_epoch"]}...')
     model = mx.model.FeedForward.load(checkpoints_path, arguments['start_epoch'])
@@ -70,10 +70,10 @@ model = mx.model.FeedForward(ctx=[mx.gpu(i) for i in range(config.NUM_DEVICES)],
                              # Below are the parameters for the optimizer.
                              learning_rate=1e-2,
                              momentum=0.9,
-                             wd=0.0005)
-# rescale_grad=1.0 / batch_size)
+                             wd=0.0002)
+                             # rescale_grad=1.0 / batch_size)
 
-batch_end_callbacks = [mx.callback.Speedometer(batch_size, 500)]
+batch_end_callbacks = [mx.callback.Speedometer(batch_size, 250)]
 epoch_end_callbacks = [mx.callback.do_checkpoint(checkpoints_path)]
 metrics = [mx.metric.Accuracy(), mx.metric.TopKAccuracy(top_k=5), mx.metric.CrossEntropy()]
 

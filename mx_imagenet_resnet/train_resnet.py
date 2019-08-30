@@ -5,8 +5,8 @@ import os
 
 import mxnet as mx
 
-from mx_imagenet_alexnet.config import imagenet_alexnet_config as config
-from nn.mxconv.mxalexnet import MxAlexNet
+from mx_imagenet_resnet.config import imagenet_resnet_config as config
+from nn.mxconv.mxresnet import MxResNet
 
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument('-c', '--checkpoints', required=True, help='Path to output checkpoint directory.')
@@ -22,7 +22,7 @@ with open(config.DATASET_MEAN, 'r') as f:
 batch_size = config.BATCH_SIZE * config.NUM_DEVICES
 
 train_iter = mx.io.ImageRecordIter(path_imgrec=config.TRAIN_MX_REC,
-                                   data_shape=(3, 227, 227),
+                                   data_shape=(3, 224, 224),
                                    batch_size=batch_size,
                                    rand_crop=True,
                                    rand_mirror=True,
@@ -34,7 +34,7 @@ train_iter = mx.io.ImageRecordIter(path_imgrec=config.TRAIN_MX_REC,
                                    preprocess_threads=config.NUM_DEVICES * 2)
 
 val_iter = mx.io.ImageRecordIter(path_imgrec=config.VAL_MX_REC,
-                                 data_shape=(3, 227, 227),
+                                 data_shape=(3, 224, 224),
                                  batch_size=batch_size,
                                  mean_r=means['R'],
                                  mean_g=means['G'],
@@ -49,7 +49,15 @@ auxiliary_params = None
 
 if arguments['start_epoch'] <= 0:
     print('[INFO] Building network...')
-    model = MxAlexNet.build(config.NUM_CLASSES)
+    # ResNet50
+    model = MxResNet.build(config.NUM_CLASSES, stages=(3, 4, 6, 3), filters=(64, 256, 512, 1024, 2048))
+
+    # ResNet101
+    # model = MxResNet.build(config.NUM_CLASSES, stages=(3, 4, 23, 3), filters=(64, 256, 512, 1024, 2048))
+
+    # ResNet152
+    # model = MxResNet.build(config.NUM_CLASSES, stages=(3, 8, 36, 3), filters=(64, 256, 512, 1024, 2048))
+
 else:
     print(f'[INFO] Loading epoch {arguments["start_epoch"]}...')
     model = mx.model.FeedForward.load(checkpoints_path, arguments['start_epoch'])
@@ -60,20 +68,20 @@ else:
 
 model = mx.model.FeedForward(ctx=[mx.gpu(i) for i in range(config.NUM_DEVICES)],
                              symbol=model,
-                             initializer=mx.initializer.Xavier(),
+                             initializer=mx.initializer.MSRAPrelu(),
                              arg_params=argument_params,
                              aux_params=auxiliary_params,
                              # optimizer=opt,
-                             num_epoch=90,
+                             num_epoch=100,
                              begin_epoch=arguments['start_epoch'],
                              optimizer='sgd',
                              # Below are the parameters for the optimizer.
-                             learning_rate=1e-2,
+                             learning_rate=1e-1,
                              momentum=0.9,
-                             wd=0.0005)
+                             wd=0.0001)
 # rescale_grad=1.0 / batch_size)
 
-batch_end_callbacks = [mx.callback.Speedometer(batch_size, 500)]
+batch_end_callbacks = [mx.callback.Speedometer(batch_size, 250)]
 epoch_end_callbacks = [mx.callback.do_checkpoint(checkpoints_path)]
 metrics = [mx.metric.Accuracy(), mx.metric.TopKAccuracy(top_k=5), mx.metric.CrossEntropy()]
 

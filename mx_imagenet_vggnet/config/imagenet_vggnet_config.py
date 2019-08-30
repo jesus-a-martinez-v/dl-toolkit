@@ -27,5 +27,5 @@ TEST_MX_REC = path.sep.join([MX_OUTPUT, 'rec', 'test.rec'])
 DATASET_MEAN = './output/imagenet_mean.json'
 
 #### FROM EXPERIMENT TO EXPERIMENT, THE VARIABLES BELOW ARE THE ONLY WE NEED TO CHANGE ####
-BATCH_SIZE = 256
+BATCH_SIZE = 32
 NUM_DEVICES = 1

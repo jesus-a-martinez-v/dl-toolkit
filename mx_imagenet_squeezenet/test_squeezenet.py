@@ -4,7 +4,7 @@ import os
 
 import mxnet as mx
 
-from mx_imagenet_alexnet.config import imagenet_alexnet_config as config
+from mx_imagenet_googlenet.config import imagenet_googlenet_config as config
 
 argument_parser = argparse.ArgumentParser()
 argument_parser.add_argument('-c', '--checkpoints', required=True, help='Path to output checkpoints directory.')
