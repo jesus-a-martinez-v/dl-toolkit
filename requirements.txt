@@ -21,7 +21,7 @@ mock==2.0.0
 mxnet-cu100mkl==1.4.1
 networkx==2.3
 numpy==1.14.6
-opencv-contrib-python==4.1.0.25
+opencv-contrib-python==4.1.1.26
 patool==1.12
 pbr==5.2.0
 Pillow==5.1.0
